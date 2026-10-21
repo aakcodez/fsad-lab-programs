@@ -1,110 +1,161 @@
 import React from "react";
 
 const studlist = [
-  {
-    slno: 1,
-    name: "stud1",
-    usn: "rvce1",
-    tmarks: 150,
-  },
-  {
-    slno: 2,
-    name: "stud2",
-    usn: "rvce2",
-    tmarks: 145,
-  },
+  { slno: 1, name: "Anvita", usn: "rvce1", tmarks: 150 },
+  { slno: 2, name: "Aditi", usn: "rvce2", tmarks: 145 }
 ];
 
+// 1. Display one student
 class StudentRow extends React.Component {
   render() {
-    const studl = this.props.stdli;
+    const s = this.props.stdli;
 
     return (
       <tr>
-        <td>{studl.slno}</td>
-        <td>{studl.name}</td>
-        <td>{studl.usn}</td>
-        <td>{studl.tmarks}</td>
+        <td>{s.slno}</td>
+        <td>{s.name}</td>
+        <td>{s.usn}</td>
+        <td>{s.tmarks}</td>
       </tr>
     );
   }
 }
 
+// 2. Display the table
 class StudentsTable extends React.Component {
   render() {
-    const studrows = this.props.studlist.map((studli) => (
-      <StudentRow key={studli.slno} stdli={studli} />
-    ));
-
     return (
-      <table border="1" cellPadding="10">
+      <table border="1" cellPadding="8">
         <thead>
           <tr>
             <th>Sl No</th>
-            <th>Student Name</th>
+            <th>Name</th>
             <th>USN</th>
-            <th>Total Marks</th>
+            <th>Marks</th>
           </tr>
         </thead>
-
-        <tbody>{studrows}</tbody>
+        <tbody>
+          {this.props.studlist.map(s => (
+            <StudentRow key={s.slno} stdli={s} />
+          ))}
+        </tbody>
       </table>
     );
   }
 }
 
-class StudentListTable extends React.Component {
+// 3. Add Student component
+class StudentAddSubmit extends React.Component {
   constructor() {
     super();
-
     this.state = {
-      newStudList: [],
+      name: "",
+      usn: "",
+      tmarks: ""
     };
   }
 
-  componentDidMount() {
-    this.loadData();
-  }
+  handleSubmit = () => {
+    if (!this.state.name || !this.state.usn || this.state.tmarks === "") {
+      alert("Please enter all student details");
+      return;
+    }
 
-  loadData() {
-    setTimeout(() => {
-      this.setState({ newStudList: studlist }, () => {
-        setTimeout(() => {
-          this.loadupdate();
-        }, 1000);
-      });
-    }, 1000);
-
-    console.log("I have loaded the student list component");
-  }
-
-  loadupdate() {
-    const newstudlist1 = this.state.newStudList.slice();
-
-    const stud = {
-      slno: 3,
-      name: "rvce12",
-      usn: "rvce12",
-      tmarks: 250,
-    };
-
-    newstudlist1.push(stud);
-
-    this.setState({
-      newStudList: newstudlist1,
+    this.props.CreateStudentAdd({
+      name: this.state.name,
+      usn: this.state.usn,
+      tmarks: Number(this.state.tmarks)
     });
-  }
+
+    this.setState({ name: "", usn: "", tmarks: "" });
+  };
 
   render() {
     return (
-      <React.Fragment>
-        <h1>Student List</h1>
-        <hr />
+      <div>
+        <h3>Add New Student</h3>
+
+        Name:
+        <input
+          value={this.state.name}
+          onChange={(e) => this.setState({ name: e.target.value })}
+        />
+
+        USN:
+        <input
+          value={this.state.usn}
+          onChange={(e) => this.setState({ usn: e.target.value })}
+        />
+
+        Marks:
+        <input
+          type="number"
+          value={this.state.tmarks}
+          onChange={(e) => this.setState({ tmarks: e.target.value })}
+        />
+
+        <button onClick={this.handleSubmit}>Add Student</button>
+      </div>
+    );
+  }
+}
+
+// 4. Main component
+class StudentListTable extends React.Component {
+  constructor() {
+    super();
+    this.state = { newStudList: [] };
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ newStudList: studlist }, () => {
+        setTimeout(() => this.loadupdate(), 1000);
+      });
+    }, 1000);
+  }
+
+  loadupdate() {
+    const list = this.state.newStudList.slice();
+
+    list.push({
+      slno: 3,
+      name: "Adithi",
+      usn: "rvce12",
+      tmarks: 250
+    });
+
+    this.setState({ newStudList: list });
+  }
+
+  CreateStudentAdd = (student) => {
+  const list = this.state.newStudList.slice();
+
+  const nextId = list.length
+    ? Math.max(...list.map(s => s.slno)) + 1
+    : 1;
+
+  list.push({
+    slno: nextId,
+    name: student.name,
+    usn: student.usn,
+    tmarks: student.tmarks
+  });
+
+  this.setState({ newStudList: list });
+};
+
+  render() {
+    return (
+      <div>
+        <h2>Student List</h2>
 
         <StudentsTable studlist={this.state.newStudList} />
 
         <hr />
-      </React.Fragment>
+
+        <StudentAddSubmit CreateStudentAdd={this.CreateStudentAdd} />
+      </div>
     );
   }
 }
