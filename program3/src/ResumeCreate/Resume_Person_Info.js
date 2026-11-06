@@ -5,7 +5,7 @@ class Resume_Person_Info extends React.Component {
     return (
       <div>
         <div>
-          Name: <p>Prashanth K</p>
+          Name: <p>Anvita</p>
         </div>
 
         <br />
@@ -23,7 +23,7 @@ class Resume_Person_Info extends React.Component {
         <br />
 
         <div>
-          Email ID: <p>prashanthk@rvce.edu.in</p>
+          Email ID: <p>anvitak@rvce.edu.in</p>
         </div>
       </div>
     );
